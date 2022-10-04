@@ -34,6 +34,9 @@ class ListsSpec extends flatspec.AnyFlatSpec with should.Matchers {
 
   import edu.neu.coe.csye7200.lab99.scala99.P02._
 
+  it should "throw an exception for Nil" in {
+    a[NoSuchElementException] should be thrownBy penultimate(Nil)
+  }
   it should "throw an exception for fib0" in {
     a[NoSuchElementException] should be thrownBy penultimate(fib0)
   }

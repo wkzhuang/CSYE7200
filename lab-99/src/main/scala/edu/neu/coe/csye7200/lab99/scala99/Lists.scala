@@ -28,24 +28,54 @@ object P00 {
 object P01 {
 
 //  @scala.annotation.tailrec
-  def last[X](xs: List[X]): X = ??? // TO BE IMPLEMENTED
+  def last[X](xs: List[X]): X = xs match{
+    case Nil => throw new NoSuchElementException("empty list")
+    case h :: Nil => h
+    // h will not be used, so you can you _ to replace it
+    case _ :: t => last(t)
+  }
 }
 
 object P02 {
 
 //  @scala.annotation.tailrec
-  def penultimate[X](xs: List[X]): X = ??? // TO BE IMPLEMENTED
+  def penultimate[X](xs: List[X]): X = xs match{
+    // if only 1 element, doesn't have a penultimate one
+    // what we really want
+    case h :: _ :: Nil => h
+    case _ :: t => penultimate(t)
+    // match whatever
+    case _ => throw new NoSuchElementException("empty list")
+  }
 }
 
 object P03 {
 
 //  @scala.annotation.tailrec
-  def kth[X](k: Int, xs: List[X]): X = ??? // TO BE IMPLEMENTED
+  def kth[X](k: Int, xs: List[X]): X = (k,xs) match{
+    // base case: head of the list
+    case (0, h :: _) => h
+    // recursive case with guard clause (although it won't loop forever)
+    case (n, _ :: t) if n > 0 => kth(n-1, t)
+    case (_, Nil) => throw new NoSuchElementException("empty list")
+    // takes care of the case where k is negative
+    case _ => throw new NoSuchElementException(s"k is negative: $k")
+  }
 }
 
 object P04 {
 
-  def length[X](xs: List[X]): Int = ??? // TO BE IMPLEMENTED
+  def length[X](xs: List[X]): Int = xs match{
+    case Nil => 0
+    // to deal with very long list, needs to use tail recursion
+    case _ =>
+      @tailrec // optional annotation
+      def inner(r: Int, work: List[X]): Int = work match{
+        case Nil => r
+        case _ :: t => inner(r+1, t)
+      }
+      inner(0, xs)
+  }
 }
 
 object P05 {

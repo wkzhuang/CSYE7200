@@ -35,7 +35,7 @@ object Ingest extends App {
     case h :: _ => Source.fromFile(h)
   }
 
-  for (m <- ingester(source)) println(m.properties.mkString(", "))
+  println((for (m <- ingester(source); if (m.properties(20)=="New Zealand")) yield m).size)
   source.close()
 
   // Please note that an alternative to the definition of source above would be as in the following comment:
