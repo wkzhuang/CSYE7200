@@ -98,7 +98,7 @@ object Movie extends App {
       * @param w a line of input.
       * @return a Try[Movie]
       */
-    def parse(w: String): Try[Movie] = Try(Movie(w.split(","))) // TO BE IMPLEMENTED
+    def parse(w: String): Try[Movie] = Try(Movie(w.split(",")))
   }
 
   val ingester = new Ingest[Movie]()
