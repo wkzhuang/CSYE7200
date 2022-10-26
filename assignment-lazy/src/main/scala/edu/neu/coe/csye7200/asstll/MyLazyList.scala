@@ -13,7 +13,8 @@ import scala.annotation.tailrec
   * @param lazyTail a function which, when invoked, yields the tail of this stream.
   * @tparam X the underlying type of the stream, and of the value <code>x</code>.
   */
-case class MyLazyList[X](x: X, lazyTail: () => ListLike[X]) extends LazyListLike[X] {
+case class MyLazyList[X]( x: X, lazyTail: () => ListLike[X]) extends LazyListLike[X] {
+  // override def map[Y](f: X => Y): ListLike[Y] = MyLazyList(f(x), ()=>lazyTail() map f)
 
 
   /**
@@ -303,7 +304,7 @@ case object EmptyList extends LazyListLike[Nothing] {
 }
 
 abstract class LazyListLike[+X] extends ListLike[X] {
-
+  private var name = ""
   /**
     * The "map" function.
     * NOTE: that we have defined the <code>map</code> function in terms of <code>flatMap</code> and the

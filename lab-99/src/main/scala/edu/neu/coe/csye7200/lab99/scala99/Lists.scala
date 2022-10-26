@@ -81,15 +81,20 @@ object P04 {
 object P05 {
 
   def reverse[X](xs: List[X]): List[X] = {
-    // TO BE IMPLEMENTED
-    ???
+    def inner(cur: List[X], prev: List[X]): List[X] = cur match {
+      case Nil => prev
+      case h :: t => inner(t, h::prev)
+    }
+    inner(xs, Nil)
   }
 }
 
 object P06 {
 
 //@tailrec
-def isPalindrome[X](xs: List[X]): Boolean = ??? // TO BE IMPLEMENTED
+def isPalindrome[X](xs: List[X]): Boolean =
+  // xs == P05.reverse(xs)
+
 }
 
 object P07 {
