@@ -161,7 +161,7 @@ object Function {
     * @return a (curried) function of type (T1,T2)=>T4=>R
     */
   // This one is a bit harder. But again, think in terms of an anonymous function that is what you want to return
-  def uncurried2[T1, T2, T3, R](f: T1 => T2 => T3 => R): (T1, T2) => T3 => R = ??? // TO BE IMPLEMENTED
+  def uncurried2[T1, T2, T3, R](f: T1 => T2 => T3 => R): (T1, T2) => T3 => R = (t1,t2) => t3 => f(t1)(t2)(t3) // TO BE IMPLEMENTED
 
   /**
     * This method uncurries the first three parameters of a four- (or more-)
@@ -178,7 +178,8 @@ object Function {
     * @return a (curried) function of type (T1,T2,T3)=>T4=>R
     */
   // If you can do uncurried2, then you can do this one
-  def uncurried3[T1, T2, T3, T4, R](f: T1 => T2 => T3 => T4 => R): (T1, T2, T3) => T4 => R = ??? // TO BE IMPLEMENTED
+  def uncurried3[T1, T2, T3, T4, R](f: T1 => T2 => T3 => T4 => R): (T1, T2, T3) => T4 => R =
+    (t1,t2,t3) => t4 => f(t1)(t2)(t3)(t4)  // TO BE IMPLEMENTED
 
   /**
     * This method uncurries the first three parameters of a four- (or more-)
@@ -196,7 +197,7 @@ object Function {
     */
   // If you can do uncurried3, then you can do this one
   def uncurried7[T1, T2, T3, T4, T5, T6, T7, T8, R](f: T1 => T2 => T3 => T4 => T5 => T6 => T7 => T8 => R): (T1, T2, T3, T4, T5, T6, T7) => T8 => R =
-  ??? // TO BE IMPLEMENTED
+    (t1,t2,t3,t4,t5,t6,t7) => t8 => f(t1)(t2)(t3)(t4)(t5)(t6)(t7)(t8) // TO BE IMPLEMENTED
 
 
   def sequence[X](xys: Seq[Try[X]]): Try[Seq[X]] = xys.foldLeft(Try(Seq[X]())) {
