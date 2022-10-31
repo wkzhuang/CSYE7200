@@ -135,7 +135,7 @@ object Movie extends App {
     //  if (m != m.toJson.convertTo[Movie])  false
     // }
     // true
-    val SerializeAndDeserialize = for (m<-ms) yield m.toJson.convertTo[Movie]
+    val SerializeAndDeserialize = ms.map(m => m.toJson.convertTo[Movie])
     ms == SerializeAndDeserialize
   }
 
