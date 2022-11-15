@@ -6,13 +6,16 @@ trait Comparer[T] extends (((T, T)) => Comparison) {
   self =>
 
   //noinspection ConvertExpressionToSAM
-  def toOrdering: Ordering[T] = ??? // TO BE IMPLEMENTED
+  def toOrdering: Ordering[T] = new Ordering[T] {
+    def compare(x: T, y: T): Int = self(x,y).toInt
+  } // TO BE IMPLEMENTED
 
-  def >(tt: (T, T)): Boolean = ??? // TO BE IMPLEMENTED
+  def >(tt: (T, T)): Boolean = self(tt).flip().getOrElse(false)
+  // self(tt)() returns Option[Boolean]. If equal returns None, default less
 
   def <(tt: (T, T)): Boolean = self(tt)().getOrElse(false)
 
-  def ==(tt: (T, T)): Boolean = ??? // TO BE IMPLEMENTED
+  def ==(tt: (T, T)): Boolean = self(tt)().isEmpty // TO BE IMPLEMENTED
 
   def >=(tt: (T, T)): Boolean = ! <(tt)
 
@@ -41,7 +44,7 @@ object Comparer {
 
   implicit val intComparer: Comparer[Int] = Ordering[Int]
   // what should follow this comment?
-  ??? // TO BE IMPLEMENTED
+  implicit val stringComparer: Comparer[String] = Ordering[String] // TO BE IMPLEMENTED
 
   implicit def convert[T](x: Ordering[T]): Comparer[T] = (tt: (T, T)) => Comparison(x.compare(tt._1, tt._2))
 }

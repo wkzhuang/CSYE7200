@@ -1,6 +1,7 @@
 package edu.neu.coe.csye7200.asstwc
 
 import edu.neu.coe.csye7200.asstwc.WebCrawler.{canParse, wget}
+
 import java.net.{MalformedURLException, URL}
 import scala.collection.immutable.Queue
 import scala.concurrent._
@@ -10,7 +11,7 @@ import scala.language.postfixOps
 import scala.util._
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
-import scala.xml.Node
+import scala.xml.{Node, NodeSeq}
 
 /**
  * Class to perform a web crawl.
@@ -139,7 +140,13 @@ object WebCrawler extends App {
     def wget(url: URL)(implicit ec: ExecutionContext): Future[Seq[URL]] = {
         // Hint: write as a for-comprehension, using the method createURL(Option[URL], String) to get the appropriate URL for relative links
         // 16 points.
-        def getURLs(ns: Node): Seq[Try[URL]] = ??? // TO BE IMPLEMENTED
+        def getURLs(ns: Node): Seq[Try[URL]] = {
+            // for {n <- ns \\ "a"; nh <- n \ "@href"} yield createURL(Some(url), nh.text)
+            // val test = ns \\ "a" map(_ \ "@href") // .filter(t => canParse(new URL(t toString)))
+            // println(test)
+            // for (t <-test) println(canParse(new URL(t toString)))
+            for {n <- ns \\ "a"; nh <- n \ "@href"} yield validateURL(createURL(Some(url), nh.toString))
+        } // TO BE IMPLEMENTED
 
         def getLinks(g: String): Try[Seq[URL]] = {
             val ny: Try[Node] = HTMLParser.parse(g) recoverWith { case f => Failure(new RuntimeException(s"parse problem with URL $url: $f")) }
@@ -147,7 +154,7 @@ object WebCrawler extends App {
         }
         // Hint: write as a for-comprehension, using getURLContent (above) and getLinks above. You will also need MonadOps.asFuture
         // 9 points.
-        ??? // TO BE IMPLEMENTED
+        for (sf <- getURLContent(url); us <- MonadOps.asFuture(getLinks(sf))) yield us // TO BE IMPLEMENTED
     }
 
     /**
@@ -207,3 +214,4 @@ case class Unstring(n: Int) extends CharSequence {
 }
 
 case class UnstringException(str: String) extends Exception(str)
+

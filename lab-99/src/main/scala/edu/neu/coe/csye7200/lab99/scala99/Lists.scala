@@ -92,8 +92,16 @@ object P05 {
 object P06 {
 
 //@tailrec
-def isPalindrome[X](xs: List[X]): Boolean =
+def isPalindrome[X](xs: List[X]): Boolean = {
   // xs == P05.reverse(xs)
+  def inner (r: Boolean, work: List[X]): Boolean = r && (work match {
+    case Nil | _ :: Nil => true
+    case start :: (middle :+ end) => inner(start == end, middle)
+    case _ => false
+  }
+  )
+  inner(true, xs)
+}
 
 }
 
