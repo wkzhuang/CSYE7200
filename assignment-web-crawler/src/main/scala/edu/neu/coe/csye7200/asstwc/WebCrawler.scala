@@ -11,7 +11,7 @@ import scala.language.postfixOps
 import scala.util._
 import scala.util.control.NonFatal
 import scala.util.matching.Regex
-import scala.xml.{Node, NodeSeq}
+import scala.xml.Node
 
 /**
  * Class to perform a web crawl.
