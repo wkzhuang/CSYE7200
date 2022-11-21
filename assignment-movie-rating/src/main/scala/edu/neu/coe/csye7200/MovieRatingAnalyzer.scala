@@ -1,46 +1,70 @@
-package edu.neu.coe.csye7200.csv
-
-import com.phasmidsoftware.table.Table
-import org.apache.spark.sql.{Dataset, SparkSession}
-import scala.util.Try
-
+package edu.neu.coe.csye7200
 
 /**
- * @author scalaprof
+  The following code is built upon existing module spark-csv in the class repo
  */
-case class MovieDatabaseAnalyzer(resource: String) {
 
+import org.apache.spark.sql.{DataFrame, SparkSession}
+import scala.util.{Try,Success,Failure}
+import org.apache.spark.sql.functions.{avg, stddev}
+// import org.apache.log4j.{Level, Logger}
+
+object MovieRatingAnalyzer extends App{
+
+  // Establish spark connection
   val spark: SparkSession = SparkSession
           .builder()
-          .appName("WordCount")
-          .master("local[*]")
+          .appName("Rating Analysis")
+          .master("local[1]")
           .getOrCreate()
 
+  //  Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
   spark.sparkContext.setLogLevel("ERROR") // We want to ignore all of the INFO and WARN messages.
 
-  import MovieParser._
-  import spark.implicits._
 
-  private val mty: Try[Table[Movie]] = Table.parseResource(resource, getClass)
-  val dy: Try[Dataset[Movie]] = mty map {
-    mt =>
-      println(s"Movie table has ${mt.size} rows")
-      spark.createDataset(mt.rows.toSeq)
+  val path = "/Users/jwkz96/Desktop/CSYE7200/assignment-movie-rating/src/main/resources/movie_metadata.csv"
+  val analyzer = MovieRatingAnalyzer(path)
+  val df = {
+    analyzer.read_file(spark) match{
+      case Success(df) => df
+      case Failure(f) => throw new Exception(s"Error reading in file! Thrown $f")
+    }
+  }
+  // check the df that was read in
+  df.show(5)
+  val mean_df = analyzer.calc_stats(df, "imdb_score", "mean")
+  val std_df = analyzer.calc_stats(df, "imdb_score", "std")
+
+  val mean = mean_df match{
+    case Success(df) => df.first().getDouble(0)
+    case Failure(_) => println("Error calculating the mean")
+  }
+
+  val std = std_df match {
+    case Success(df) => df.first().getDouble(0)
+    case Failure(_) => println("Error calculating the mean")
+  }
+  println(s"The mean rating is: $mean");
+  println(s"The standard deviation of ratings is: $std")
+}
+
+case class MovieRatingAnalyzer(resource: String){
+
+  // Method to read_file using existing SparkSession
+  def read_file(ss:SparkSession): Try[DataFrame] = {
+     Try(ss.read.option("header", true).csv(resource))
+  }
+
+  // Method to process DataFrame and return desired statistics
+  def calc_stats(df: DataFrame, col: String, stats: String): Try[DataFrame] = {
+    stats match {
+      case "mean" => Success(df.select(avg(col)))
+      case "std" => Success(df.select(stddev(col)))
+      case _ => Failure(new Exception("Only calculates mean and standard deviation!"))
+    }
 
   }
+
 }
 
 
-/**
- * @author scalaprof
- */
-object MovieDatabaseAnalyzer extends App {
-
-  def apply(resource: String): MovieDatabaseAnalyzer = new MovieDatabaseAnalyzer(resource)
-
-  apply("/movie_metadata.csv").dy foreach {
-    d =>
-      println(d.count())
-      d.show(10)
-  }
-}
