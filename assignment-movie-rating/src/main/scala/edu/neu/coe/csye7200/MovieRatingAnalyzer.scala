@@ -18,7 +18,7 @@ object MovieRatingAnalyzer extends App{
           .master("local[1]")
           .getOrCreate()
 
-  //  Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
+  // Logger.getLogger("org.apache.spark").setLevel(Level.ERROR)
   spark.sparkContext.setLogLevel("ERROR") // We want to ignore all of the INFO and WARN messages.
 
 
